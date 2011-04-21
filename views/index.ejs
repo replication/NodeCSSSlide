@@ -1,0 +1,39 @@
+<script type="text/javascript" src="/javascripts/CSSslide.js"></script>
+<div>
+<h1><%= title %></h1>
+<p>Welcome to <%= title %></p>
+</div>
+<div>
+<h2>スライド1</h2>
+<p>ダミーテキスト</p>
+</div>
+<div>
+<h2>スライド2</h2>
+<p>ダミーテキスト</p>
+</div>
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+<script>
+  var socket = new io.Socket();
+  // サーバからメッセージを受信したときの処理
+  socket.on('message', function(msg) {
+    // CSSSlideのメソッドを呼び出して、指定されたページに移動する
+    CSSslide.move(msg);
+  });
+  
+  // サーバに接続する
+  socket.connect();
+  
+  // キーが押された場合の処理
+  document.addEventListener("keydown", function(event) {
+    // Right
+    if (event.keyCode === 39) {
+      // サーバに対して次ページ番号を送信する
+      socket.send(CSSslide.nowPage + 1);
+    }
+    // Left
+    else if(event.keyCode === 37) {
+      // サーバに対して前ページ番号を送信する
+      socket.send(CSSslide.nowPage - 1);
+    }
+  }, false);
+</script>
