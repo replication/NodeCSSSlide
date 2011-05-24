@@ -1,2 +1,7 @@
-To Run
+-動かし方
 node app.js
+
+-以下の環境で動作を確認しています。
+・node.js@0.4.8
+・express@2.3.7
+・socket.io@0.6.18
