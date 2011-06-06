@@ -1,7 +1,7 @@
 <script type="text/javascript" src="/javascripts/CSSslide.js"></script>
 <div>
 <h1><%= title %></h1>
-<p>Welcome to <%= title %></p>
+<p><%= desc %></p>
 </div>
 <div>
 <h2>スライド1</h2>
@@ -36,4 +36,39 @@
       socket.send(CSSslide.nowPage - 1);
     }
   }, false);
+  
+  var startX; // フリックの開始座標
+  var diffX;  // 座標の差分
+  
+  // フリック開始イベント
+  document.addEventListener("touchstart", touchStart, false);
+  function touchStart(e) {
+    var touch = e.touches[0];
+    startX = touch.pageX;
+  }
+  
+  // フリック中のイベント
+  document.addEventListener("touchmove", touchMove, false);
+  function touchMove(e) {
+    // ページ全体でスクロールを抑止
+    e.preventDefault();
+    // 移動した座標を格納
+    var touch = e.touches[0];
+    diffX = touch.pageX - startX;
+  }
+  
+  // フリックが終了したときのイベント
+  document.addEventListener("touchend", touchEnd, false);
+  function touchEnd(e) {
+    if (diffX > 100) {
+      // 右へフリック
+      socket.send(CSSslide.nowPage + 1);
+      CSSslide.move(CSSslide.nowPage + 1);
+    } else if (diffX < -100) {
+      // 左へフリック
+      socket.send(CSSslide.nowPage - 1);
+      CSSslide.move(CSSslide.nowPage - 1);
+    }
+  }
+  
 </script>
