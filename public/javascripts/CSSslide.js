@@ -72,8 +72,8 @@ var CSSslide={
  //キーが押されたとき
  keyListener:function(evt){
   var kc=(document.all)?event.keyCode:evt.keyCode;
-  if(kc==39||kc==13){ CSSslide.move(CSSslide.nowPage+1); }
-  else if(kc==37){ CSSslide.move(CSSslide.nowPage-1); }
+  if(kc==39||kc==13){ /*CSSslide.move(CSSslide.nowPage+1);*/ }
+  else if(kc==37){ /*CSSslide.move(CSSslide.nowPage-1);*/ }
   else if(kc==188){ CSSslide.fontResize(CSSslide.fontSizeRatio-10);  }
   else if(kc==190){ CSSslide.fontResize(CSSslide.fontSizeRatio+10);  }
   else if(kc==53||kc==101){ CSSslide.fontResize(CSSslide.fontSizeRatioDefault);  }

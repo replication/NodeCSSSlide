@@ -24,48 +24,65 @@
   socket.connect();
   
   // キーが押された場合の処理
-  document.addEventListener("keydown", function(event) {
-    // Right
-    if (event.keyCode === 39) {
-      // サーバに対して次ページ番号を送信する
-      socket.send(CSSslide.nowPage + 1);
-    }
-    // Left
-    else if(event.keyCode === 37) {
-      // サーバに対して前ページ番号を送信する
-      socket.send(CSSslide.nowPage - 1);
-    }
-  }, false);
+  if (document.addEventListener) {
+    document.addEventListener("keydown", function(e) {
+      sendMessage(e);
+    }, false);
+  }
+  else {
+    document.attachEvent('onkeydown', function(e) {
+      sendMessage(e);
+    });
+  }
   
   var startX; // フリックの開始座標
   var diffX;  // 座標の差分
   
   // フリック開始イベント
-  document.addEventListener("touchstart", touchStart, false);
-  function touchStart(e) {
-    var touch = e.touches[0];
-    startX = touch.pageX;
+  if(document.addEventListener) {
+    document.addEventListener("touchstart", touchStart, false);
+    function touchStart(e) {
+      var touch = e.touches[0];
+      startX = touch.pageX;
+    }
+  
+    // フリック中のイベント
+    document.addEventListener("touchmove", touchMove, false);
+    function touchMove(e) {
+      // ページ全体でスクロールを抑止
+      e.preventDefault();
+      // 移動した座標を格納
+      var touch = e.touches[0];
+      diffX = touch.pageX - startX;
+    }
+  
+    // フリックが終了したときのイベント
+    document.addEventListener("touchend", touchEnd, false);
+    function touchEnd(e) {
+      if (diffX > 100) {
+         // 右へフリック
+        socket.send(CSSslide.nowPage + 1);
+        CSSslide.move(CSSslide.nowPage + 1);
+      } else if (diffX < -100) {
+        // 左へフリック
+        socket.send(CSSslide.nowPage - 1);
+        CSSslide.move(CSSslide.nowPage - 1);
+      }
+    }
   }
   
-  // フリック中のイベント
-  document.addEventListener("touchmove", touchMove, false);
-  function touchMove(e) {
-    // ページ全体でスクロールを抑止
-    e.preventDefault();
-    // 移動した座標を格納
-    var touch = e.touches[0];
-    diffX = touch.pageX - startX;
-  }
-  
-  // フリックが終了したときのイベント
-  document.addEventListener("touchend", touchEnd, false);
-  function touchEnd(e) {
-    if (diffX > 100) {
-      // 右へフリック
+  // websocketでメッセージを送信する
+  function sendMessage(evt) {
+    var e = (evt) ? evt : ((window.event) ? evt : null);
+    // 右キーが押された場合
+    if (e.keyCode === 39 || e.keyCode === 13) {
+      // サーバに対して次ページ番号を送信する
       socket.send(CSSslide.nowPage + 1);
       CSSslide.move(CSSslide.nowPage + 1);
-    } else if (diffX < -100) {
-      // 左へフリック
+    }
+    // 左キーが押された場合
+    else if(e.keyCode === 37) {
+      // サーバに対して前ページ番号を送信する
       socket.send(CSSslide.nowPage - 1);
       CSSslide.move(CSSslide.nowPage - 1);
     }
